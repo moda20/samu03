@@ -2,7 +2,7 @@ os: unstable
 cache:
   - node_modules
 environment:
-  AppVeyor:
+  appveyor_auth_token:
     secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
   matrix:
     - nodejs_version: 9
