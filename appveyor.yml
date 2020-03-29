@@ -2,7 +2,7 @@ os: unstable
 cache:
   - node_modules
 environment:
-  appveyor_auth_token:
+  GH_TOKEN:
     secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
   matrix:
     - nodejs_version: 9
@@ -23,7 +23,7 @@ test_script:
 
 deploy:
   - provider: GitHub
-    auth_token:
+    GH_TOKEN:
       secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
     draft: false
     prerelease: true
