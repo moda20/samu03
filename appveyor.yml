@@ -3,7 +3,7 @@ cache:
   - node_modules
 environment:
   AppVeyor:
-    secure: /9/MnJBcCqIXLlHECOQi26yMafhx2FkLtgKsZ4MpamMvCoMeVW3zNYwXutrMxgwP
+    secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
   matrix:
     - nodejs_version: 9
 install:
