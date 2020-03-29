@@ -22,6 +22,11 @@ test_script:
   - npm run distwin
 
 deploy:
-  - provider: Github
-  - auth_token:
+  - provider: GitHub
+    auth_token:
       secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
+    draft: false
+    prerelease: true
+    force_update: true
+    on:
+      branch: master
