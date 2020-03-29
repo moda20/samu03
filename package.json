@@ -1,0 +1,81 @@
+{
+	"name": "samu03",
+	"productName": "samu03",
+	"version": "0.0.0",
+	"description": "My first-rate app",
+	"license": "MIT",
+	"repository": "moda20/samu03",
+	"author": {
+		"name": "Med Kadhem",
+		"email": "kadhem03@gmail.com",
+		"url": "undefined"
+	},
+	"scripts": {
+		"postinstall": "electron-builder install-app-deps",
+		"lint": "xo",
+		"test": "npm run lint",
+		"start": "electron .",
+		"pack": "electron-builder --dir",
+		"dist": "electron-builder --macos --linux --windows",
+		"release": "np"
+	},
+	"dependencies": {
+		"bootstrap": "^4.4.1",
+		"datatables": "^1.10.18",
+		"electron-context-menu": "^0.15.0",
+		"electron-debug": "^3.0.0",
+		"electron-store": "^5.1.0",
+		"electron-unhandled": "^3.0.0",
+		"electron-updater": "^4.0.6",
+		"electron-util": "^0.13.0",
+		"exceljs": "^3.8.2",
+		"jquery": "^3.4.1",
+		"sqlite3": "^4.1.1"
+	},
+	"devDependencies": {
+		"electron-rebuild": "^1.10.1",
+		"electron": "^7.1.1",
+		"electron-builder": "^22.4.1",
+		"np": "^5.0.3",
+		"xo": "^0.25.3"
+	},
+	"xo": {
+		"envs": [
+			"node",
+			"browser"
+		]
+	},
+	"np": {
+		"publish": false,
+		"releaseDraft": false
+	},
+	"build": {
+		"asar": false,
+		"appId": "com.moda20.samu03",
+		"mac": {
+			"category": "public.app-category.social-networking",
+			"darkModeSupport": true
+		},
+		"dmg": {
+			"iconSize": 160,
+			"contents": [
+				{
+					"x": 180,
+					"y": 170
+				},
+				{
+					"x": 480,
+					"y": 170,
+					"type": "link",
+					"path": "/Applications"
+				}
+			]
+		},
+		"linux": {
+			"target": [
+				"deb"
+			],
+			"category": "Network;Chat"
+		}
+	}
+}

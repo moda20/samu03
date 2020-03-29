@@ -1,0 +1,7 @@
+appId: "com.moda20.samu03"
+mac:
+  category: "public.app-category.social-networking"
+  darkModeSupport: true
+dmg:
+  iconSize: 160
+  contents:
