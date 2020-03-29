@@ -2,8 +2,7 @@ os: unstable
 cache:
   - node_modules
 environment:
-  GH_TOKEN:
-    secure: /9/MnJBcCqIXLlHECOQi26yMafhx2FkLtgKsZ4MpamMvCoMeVW3zNYwXutrMxgwP
+  GH_TOKEN: /9/MnJBcCqIXLlHECOQi26yMafhx2FkLtgKsZ4MpamMvCoMeVW3zNYwXutrMxgwP
   matrix:
     - nodejs_version: 9
 install:
