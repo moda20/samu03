@@ -76,6 +76,9 @@
 				"deb"
 			],
 			"category": "Network;Chat"
+		},
+		"win": {
+			"target": "portable"
 		}
 	}
 }
