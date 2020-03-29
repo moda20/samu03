@@ -23,7 +23,7 @@ test_script:
 
 deploy:
   - provider: GitHub
-    GH_TOKEN:
+    auth_token:
       secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
     draft: false
     prerelease: true
