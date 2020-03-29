@@ -2,7 +2,8 @@ os: unstable
 cache:
   - node_modules
 environment:
-  GH_TOKEN: /9/MnJBcCqIXLlHECOQi26yMafhx2FkLtgKsZ4MpamMvCoMeVW3zNYwXutrMxgwP
+  AppVeyor:
+    secure: /9/MnJBcCqIXLlHECOQi26yMafhx2FkLtgKsZ4MpamMvCoMeVW3zNYwXutrMxgwP
   matrix:
     - nodejs_version: 9
 install:
@@ -15,7 +16,7 @@ matrix:
   fast_finish: true
 build: off
 version: '{build}'
-shallow_clone: true
+shallow_clone: false
 clone_depth: 1
 test_script:
   - npm run distwin
