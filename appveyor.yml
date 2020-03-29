@@ -7,7 +7,7 @@ environment:
   matrix:
     - nodejs_version: 9
 install:
-  - ps: Install-Product node $env:nodejs_version stable
+  - ps: Install-Product nodeÈ stable
   - set CI=true
   - npm install -g npm@latest
   - set PATH=%APPDATA%\npm;%PATH%
