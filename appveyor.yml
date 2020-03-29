@@ -20,3 +20,7 @@ shallow_clone: false
 clone_depth: 1
 test_script:
   - npm run distwin
+
+deploy:
+  - auth_token:
+      secure: Dqei280hNd6y+arb9NQp8h4+lyNYc5Pnjp4NkCDBRvZAWmpAA8SbtezyDw5vS+ar
