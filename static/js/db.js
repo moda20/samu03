@@ -1,6 +1,6 @@
 var sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const dbPath = path.resolve(__dirname, '../db/dbfile.db')
+const dbPath = path.resolve(__dirname, '../db/dbfile.db');
 var db = new sqlite3.Database(dbPath,sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE );
 var PersistentColumns;
 
@@ -164,6 +164,37 @@ updateMetaData = function(dataToUpdate){
 }
 
 
+deleteAllData= function(){
+  return new Promise((res,rej)=>{
+    if(!db){
+      rej(null);
+    }
+    let stmt = db.prepare("delete from patients");
+    stmt.run(function (err,data) {
+      if(err){
+        rej(err);
+      }
+      res(data);
+    });
+  })
+};
+
+deleteAllMetaData = function(){
+  return new Promise((res,rej)=>{
+    if(!db){
+      rej(null);
+    }
+    let stmt = db.prepare("delete from metadata");
+    stmt.run(function (err,data) {
+      if(err){
+        rej(err);
+      }
+      res(data);
+    });
+  })
+};
+
+
 closeDatabase = function(){
   db.close();
 }
@@ -176,7 +207,9 @@ module.exports={
   closeDatabase,
   getAllPatientsData,
   getMetaData,
-  updateMetaData
+  updateMetaData,
+  deleteAllData,
+  deleteAllMetaData
 }
 
 

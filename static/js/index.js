@@ -1,5 +1,7 @@
 var Excel = require('exceljs');
 const path = require('path');
+var bootbox = require('bootbox');
+var bootstrap = require('bootstrap');
 $(document).ready(function() {
   console.log("DOCUMENT READ");
 
@@ -60,16 +62,6 @@ $(document).ready(function() {
             return {title:elem.title}
           }),
           responsive: true,
-          columnDefs: [ {
-            targets: "_all",
-            /*render: function ( data, type, row ) {
-              if(data && data.length &&  data.length>12){
-                return data.substr( 0, 12 )+"..";
-              }else{
-                return data;
-              }
-            }*/
-          } ]
         }
     );
 
@@ -92,7 +84,9 @@ $(document).ready(function() {
           endLoader("addingModal");
           updateDatatable();
         }
-    )
+    ).finally(()=>{
+      endLoader("addingModal");
+    })
   }
 
 
@@ -209,7 +203,7 @@ $(document).ready(function() {
       Globalworkbook.xlsx.writeFile(xlsPath)
           .then(function() {
             // Success Message
-            writeTobuffer("ligne Numero : "+sheet.rowCount-1+" ajoutée au fichier excel avec success");
+            writeTobuffer("ligne Numero : "+(sheet.rowCount-1)+" ajoutée au fichier excel avec success");
           });
     }
   }
@@ -227,7 +221,7 @@ $(document).ready(function() {
       let itemData;
       switch (elem.tType) {
         case "MultiRadio":{
-          itemData =$("input[name='"+splitjoin(elem.title)+"']:checked").val();
+          itemData =$("input[name='"+splitjoin(elem.title)+"']:checked").val()||"";
           break;
         }
         case "MultiCheckBox":{
@@ -235,16 +229,16 @@ $(document).ready(function() {
           $(`#cbk_${splitjoin(elem.title)}:checked`).each(function(i){
             chekcBoxValues.push($(this).val());
           });
-          itemData=chekcBoxValues.join(', ');
+          itemData=chekcBoxValues.join(', ')||"";
           console.log(itemData);
           break;
         }
         case "textarea":{
-          itemData=$("#id_"+splitjoin(elem.title)).val();
+          itemData=$("#id_"+splitjoin(elem.title)).val()||"";
           break;
         }
         default:{
-          itemData=$("#id_"+splitjoin(elem.title)).val();
+          itemData=$("#id_"+splitjoin(elem.title)).val()||"";
           break;
         }
       }
@@ -254,11 +248,11 @@ $(document).ready(function() {
     });
     console.log(data);
     dataSet.push(data);
-    updateDatatable();
     if(isSynchronizationOn==true){
       updateExcel(object);
     }
     addDbRow(data);
+    updateDatatable();
   };
 
   function splitjoin(s){
@@ -283,6 +277,11 @@ $(document).ready(function() {
 
 
   updateDatatable = function(){
+    ///if the number of rows is big the table needs to be cleared by the browser
+    //before datatables does it's job
+    if(dataSet.length>1000){
+      $('#mainTable').empty();
+    }
     if ($.fn.dataTable.isDataTable('#mainTable')) {
       $('#mainTable').DataTable().destroy();
     }
@@ -294,16 +293,6 @@ $(document).ready(function() {
       columns: Columns.map((elem)=>{
         return {title:elem.title}
       }),
-      columnDefs: [ {
-        targets: "_all",
-        /*render: function ( data, type, row ) {
-          if(data && data.length &&  data.length>12){
-            return data.substr( 0, 12 )+"..";
-          }else{
-            return data;
-          }
-        }*/
-      } ]
     });
   }
 
@@ -419,8 +408,48 @@ $(document).ready(function() {
     $("#modalBody").html(modalForm);
     $('#addingModal').modal();
     $("#id_"+splitjoin(Columns[0].title)).focus();
-  }
+  };
 
+
+
+  //Excel import
+
+  importExcelFile = function(){
+    const ipc = require('electron').ipcRenderer;
+    ipc.send('open-excel-file-dialog');
+
+    ipc.on('selected-excel-file', function (event, path) {
+
+      console.log(path);
+      if(path.canceled==false){
+        xlsPath = path.filePaths[0];
+        startLoader("wrapper");
+        readExcelFile(xlsPath).then(
+            fileRead =>{
+              let sheet = Globalworkbook.getWorksheet('Patients');
+
+              sheet.eachRow(function(row, rowNumber) {
+                console.log(rowNumber);
+                let bufferDataSet=[];
+                if(rowNumber>1){
+                  let dataToAdd =fillArray(row.values.splice(1),Columns.length);
+                  dataSet.push(dataToAdd);
+                  addDbRow(dataToAdd);
+                }
+              });
+              writeTobuffer(`${sheet.rowCount} lignes ont été ajoutées depuis le fichier excel`);
+
+            }
+        ).finally(()=>{
+          //Will update the Excel path in the DB and update the visuals
+          updateDatabaseMetaData();
+          //Will update the datatable to account for all the new adddings
+          updateDatatable();
+          endLoader("wrapper");
+        });
+      }
+    })
+  }
 
 
   /// Utils functions
@@ -441,14 +470,14 @@ $(document).ready(function() {
       })
 
       $("#historylist").html(HTML);
-  }
+  };
 
   startLoader =function(id){
-
+    $(`#${id}`).addClass("loading");
   };
 
   endLoader = function(id){
-
+    $(`#${id}`).removeClass("loading");
   };
 
   openExcellFile= function(){
@@ -457,9 +486,59 @@ $(document).ready(function() {
       const ipc = require('electron').ipcRenderer;
       ipc.send('open-os-explorer', path.dirname(xlsPath));
     }
+  };
+
+  resetLocalData = function(){
+    isSynchronizationOn=true;
+    dataSet=[];
+    $("#mainTable").empty();
+    xlsPath='';
+    Globalworkbook=null;
+  }
+
+  readExcelFile= async function(path) {
+    if(!path){
+      throw "null path";
+    }
+    let workbook = new Excel.Workbook();
+    await workbook.xlsx.readFile(path);
+    Globalworkbook= workbook;
+  }
+
+  //Method to fill arrays with empty values to get to the minimum number for datatables
+  //to function properly
+  fillArray= function(array,arrayLength,data){
+    let newArray = Object.assign([],array);
+    for(let i=0; i<arrayLength-array.length; i++){
+      newArray.push(data||null);
+    }
+    return newArray;
   }
 
 
+  //Db reset
+  resetDatabase= async function(){
+
+    bootbox.confirm(
+        {
+          locale:"fr",
+          title:"Confirmer la réinitialisation",
+          message:"Est ce que vous êtes sur de réinitialiser la base de donnée <br> <b class='text-danger'>(Pas de retour possible). </b>" +
+              "Les données en fichier excel ne seront pas touchés mais, la synchronisation automatique sera perdue.",
+          callback: async (result)=> {
+            if(result===true){
+              startLoader("wrapper");
+              await window.db.deleteAllMetaData();
+              await window.db.deleteAllData();
+              resetLocalData();
+              updateDatabaseMetaData();
+              updateDatatable();
+              writeTobuffer("réinitialisation faite avec succèes");
+              endLoader("wrapper");
+            }
+          }
+        });
+  };
 
 
 

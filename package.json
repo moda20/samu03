@@ -1,7 +1,7 @@
 {
 	"name": "samu03",
 	"productName": "samu03",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "My first-rate app",
 	"license": "MIT",
 	"repository": "moda20/samu03",
@@ -21,6 +21,7 @@
 		"release": "np"
 	},
 	"dependencies": {
+		"bootbox": "^5.4.0",
 		"bootstrap": "^4.4.1",
 		"datatables": "^1.10.18",
 		"electron-context-menu": "^0.15.0",
@@ -78,6 +79,5 @@
 			],
 			"category": "Network;Chat"
 		}
-
 	}
 }

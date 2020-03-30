@@ -73,6 +73,24 @@ const createMainWindow = async () => {
 		)
 	});
 
+	ipcMain.on('open-excel-file-dialog', function (event) {
+		dialog.showOpenDialog({
+			title:"Ouvrir le fichier excel",
+			properties: ['openFile'],
+			multiSelections:false,
+			filters:[
+				{
+					name: "MS Excel",
+					extensions:["xlsx"]
+				}
+			]
+		}).then(
+				files=>{
+					if (files) event.sender.send('selected-excel-file', files)
+				}
+		)
+	});
+
 	ipcMain.on('open-os-explorer', function (event, args) {
 		console.log(args);
 		let fpath=args;
